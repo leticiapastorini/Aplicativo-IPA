@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#F44336</color>
     <color name="PeruzzoVermelho">#E20612</color>
     <color name="PeruzzoVermelhoLow">#F2494E</color>
     <color name="PeruzzoVerde">#A8C729</color>

@@ -1,12 +1,19 @@
 <!-- res/layout/selecionar_loja.xml -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="center">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Acesso ao Inventário e Ruptura"
+        android:textSize="16sp"
+        android:textColor="#555555"
+        android:layout_marginBottom="16dp"/>
+        
     <EditText
         android:id="@+id/editLoja"
         android:layout_width="match_parent"
@@ -15,10 +22,11 @@
         android:inputType="number"
         android:layout_marginBottom="16dp"/>
 
-    <Button
-        android:id="@+id/buttonConfirmarLoja"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Confirmar" />
+  <Button
+    android:id="@+id/buttonConfirmarLoja"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Confirmar" />
+
 
 </LinearLayout>

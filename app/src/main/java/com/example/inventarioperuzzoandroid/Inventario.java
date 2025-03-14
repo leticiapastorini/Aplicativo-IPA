@@ -91,7 +91,7 @@ public class Inventario extends AppCompatActivity {
         mValueShowLoja = findViewById(R.id.showloja);
         mValueShowInventarioProdutos = findViewById(R.id.showInventarioProdutos);
         mValueShowInventarioTotal = findViewById(R.id.showInventarioTotal);
-        mValueShowSize = findViewById(R.id.sizezada);
+        //mValueShowSize = findViewById(R.id.sizezada);
         mValueShowEAN = findViewById(R.id.showEAN);
         mValueshowQtd = findViewById(R.id.showQtd);
         mInputEAN = findViewById(R.id.inputEAN);

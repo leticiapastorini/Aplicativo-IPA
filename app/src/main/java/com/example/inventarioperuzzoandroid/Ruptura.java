@@ -91,7 +91,7 @@ public class Ruptura extends AppCompatActivity {
         mValueShowLoja = findViewById(R.id.showloja);
         mValueShowRupturaProdutos = findViewById(R.id.showRupturaProdutos);
         mValueShowRupturaTotal = findViewById(R.id.showRupturaTotal);
-        mValueShowSize = findViewById(R.id.sizezada);
+        //mValueShowSize = findViewById(R.id.sizezada);
         mValueShowEAN = findViewById(R.id.showEAN);
         mValueshowQtd = findViewById(R.id.showQtd);
         mInputEAN = findViewById(R.id.inputEAN);

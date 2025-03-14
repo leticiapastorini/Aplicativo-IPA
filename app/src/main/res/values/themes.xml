@@ -15,8 +15,8 @@
     </style>
 
     <style name="Inventario" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/PeruzzoVerdeLow</item>
+              <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/PeruzzoVermelho</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->

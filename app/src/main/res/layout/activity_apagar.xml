@@ -1,58 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
-    tools:context=".Apagar">
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="#FFFFFF">
 
     <TextView
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Apagar:"
-        android:textAlignment="center"
-        android:textColor="@color/black" />
+        android:textSize="22sp"
+        android:textColor="#424242"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"/>
 
-    <LinearLayout
-        android:id="@+id/LinearLayoutButtons"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apagarInventarioBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:text="Inventário"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        app:cornerRadius="8dp"/>
 
-        <Button
-            android:id="@+id/apagarInventarioBtn"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="Inventário"
-            android:textAlignment="center" />
-
-        <Button
-            android:id="@+id/apagarRupturaBtn"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="Ruptura"
-            android:textAlignment="center" />
-    </LinearLayout>
-
-    <!-- Coloque dentro do LinearLayout pai -->
-    <TextView
-        android:layout_width="wrap_content"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apagarRupturaBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="\n\n\n" />
+        android:text="Ruptura"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        app:cornerRadius="8dp"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/voltarBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="70dp"
-        android:layout_gravity="center"
-        android:imeOptions="actionDone"
-        android:text="Voltar" />
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voltar"
+        android:textSize="16sp"
+        app:cornerRadius="8dp"/>
 
 </LinearLayout>

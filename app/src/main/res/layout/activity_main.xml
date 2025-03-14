@@ -66,16 +66,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="8dp"/>
 
-    <!-- Botão "Sobre" centralizado abaixo -->
+ 
+    
+    <!-- Botão "Sobre" minimalista, singelo, no rodapé -->
     <Button
         android:id="@+id/goToSobreBtn"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sobre"
-        android:textSize="14sp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        app:layout_constraintTop_toBottomOf="@id/goToApagarBtn"
+        android:textAllCaps="false"
+        android:textColor="#616161"
+        android:textSize="13sp"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
