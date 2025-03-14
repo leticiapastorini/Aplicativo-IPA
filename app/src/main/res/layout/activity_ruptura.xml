@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".Ruptura">
+
+    <TextView
+        android:id="@+id/showloja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Loja"
+        android:textColor="@color/black" />
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputEAN"
+        android:layout_width="277dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center"
+        android:hint="Insira o código"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:maxLength="15"
+        android:paddingBottom="10dp" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputQtd"
+        android:layout_width="276dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="Insira a quantidade"
+        android:imeOptions="actionDone"
+        android:inputType="numberDecimal"
+        android:maxLength="2"
+        android:paddingTop="10dp" />
+
+    <Button
+        android:id="@+id/adicionarBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:contextClickable="true"
+        android:focusable="false"
+        android:imeOptions="actionDone"
+        android:text="Adicionar"
+        app:textInputLayoutFocusedRectEnabled="false" />
+
+    <TextView
+        android:id="@+id/showRupturaProdutos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="Produtos: "
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/showRupturaTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="Total: "
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/sizezada"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text=""
+        android:textColor="@color/black" />
+
+
+    <TextView
+        android:id="@+id/showEAN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="Código: 0"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/showQtd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="Quantidade: 0"
+        android:textColor="@color/black" />
+
+
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/modificarBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:enabled="false"
+            android:contextClickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="Modificar"
+            android:textAlignment="center"
+            android:visibility="gone"></Button>
+
+        <Button
+            android:id="@+id/voltarBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:text="Voltar "
+            android:textAlignment="center"></Button>
+
+    </LinearLayout>
+
+
+</LinearLayout>

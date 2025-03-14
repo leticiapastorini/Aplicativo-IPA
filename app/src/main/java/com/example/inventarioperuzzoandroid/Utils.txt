@@ -1,0 +1,230 @@
+    Utils
+
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis());
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(System.currentTimeMillis());
+
+            String fileName = "MyFile_" + timeStamp + ".txt";
+
+
+      public static void Mapped() {
+
+        Map<Integer, Double> map;
+
+        map = new HashMap<>();
+
+        map.put(1, 1.0);
+        map.put(2, 2.0);
+        map.put(3, 3.0);
+        map.put(4, 4.0);
+        map.put(5, 5.0);
+        map.put(2, 6.0);
+
+        int a = 4;
+
+        if (map.containsKey(a)) {
+            map.replace(a, (double) (map.get(a) + 100));
+        }
+
+        print(map);
+
+    }
+
+        private static void print(Map<Integer, Double> item) {
+        item.forEach((chave, valor) -> {
+            System.out.println("Chave: " + chave + ", valor: " + valor);
+        });
+
+
+    }
+
+
+
+
+
+//qtdTotalTemp = qtdTotalTemp + Double.parseDouble(mTextinputQtd);
+
+//        if (mapEANQtd.containsKey(mTextinputEAN)) {
+//            if(mTextinputQtd.contains(",")){
+//                mTextinputQtd = mTextinputQtd.replace(",",".");
+//                mapEANQtd.replace(mTextinputEAN, (double) (mapEANQtd.get(mTextinputEAN) + Double.parseDouble(mTextinputQtd) ));
+//            }
+//        }
+
+
+
+
+
+
+
+
+
+//pw.println(loja + ";" + mapEANQtd + ";" + mTextinputQtd);
+                for (Map.Entry<String, Double> entry : mapEANQtd.entrySet()) {
+                    String EAN = entry.getKey();
+                    Double QTD = entry.getValue();
+                    if(mapEANQtd.containsKey(EAN)){
+                        mTextinputQtdDouble = QTD + mTextinputQtdDouble;
+                        pw.println(loja+";"+EAN+";"+(mTextinputQtdDouble));
+
+                    }
+
+                    pw.println(loja+";"+EAN+";"+QTD);
+                }
+
+
+                pw.close();
+
+
+
+
+                //pw.println(loja + ";" + mapEANQtd + ";" + mTextinputQtd);
+//                for (Map.Entry<String, Double> entry : mapEANQtd.entrySet()) {
+//                    String EAN = entry.getKey();
+//                    Double QTD = entry.getValue();
+//                    if(mapEANQtd.containsKey(EAN)){
+//                        mTextinputQtdDouble = QTD + mTextinputQtdDouble;
+//                        pw.println(loja+";"+EAN+";"+(mTextinputQtdDouble));
+//
+//                    }
+//
+//                    pw.println(loja+";"+EAN+";"+QTD);
+//                }
+
+
+
+
+
+
+
+//                //int i = 1; i < listVal.size(); i++
+//                //for (Map.Entry<String, Double> entry : mapEANQtd.entrySet()) {
+//
+//                for (Map.Entry<String, Double> entry : mapEANQtd.entrySet()) {
+//
+//                    //System.out.println(entry.getKey() + ":" + entry.getValue().toString());
+//                    pw.println(loja + ";" + (entry.getKey()) + ";" + entry.getValue().toString());
+//                    //pw.println(loja + ";" + mTextinputEAN + ";" + mapEANQtd.get(mTextinputEAN));
+//
+//                }
+
+
+                //pw.println(loja + ";" + mTextinputEAN + ";" + mapEANQtd.get(mTextinputEAN));
+
+
+
+                //Toast.makeText(this, fileName + " foi salvo em \n " + dir, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, fileNameInventario + " foi salvo em com sucesso!", Toast.LENGTH_SHORT).show();
+
+
+
+
+themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.InventarioPeruzzoAndroid" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>
+
+
+
+//                mValueShowEAN.setText("Código: " + mInputEAN.getText().toString().trim());
+//                if (rupturaBipadosTotal >= 1) {
+//                    mValueshowQtd.setText("Quantidade: " + lastQtdMap);
+//                } else {
+//                    mValueshowQtd.setText("Quantidade: " + mInputQtd.getText().toString().trim());
+//                }
+
+
+//O caminho de path é = "/sdcard"
+    public static File path = new File(System.getenv("EXTERNAL_STORAGE"));
+    //public static File path = new File("/mnt/external_sd/");
+    //public static File path = new File("mnt/sdcard/Download");
+    //public static File path = Environment.getExternalStorageDirectory();
+
+
+// INVENTÁRIO.java
+
+//inicio do inputHandler
+
+
+            //keke
+//
+//            mTextinputQtdDoubleRaw = Double.parseDouble(mTextinputQtd);
+//            mTextinputQtdDoubleRaw = Math.floor(mTextinputQtdDoubleRaw*1000)/1000;
+//            mTextinputQtdDouble = mTextinputQtdDoubleRaw;
+//
+//
+//            double test = mTextinputQtdDouble;
+//            test = Math.round(test*1000.0)/1000.0;
+//            String formatiing = String.format("%.3f",test);
+//            String newage = formatiing.replace(",",".");
+//
+//            double thisthing = Double.parseDouble(newage);
+//            System.out.println("hello");
+
+            //keke
+
+
+
+            //mTextinputQtdDoubleRaw = Double.parseDouble(mTextinputQtd);
+            //mTextinputQtdDoubleRaw = Math.round(mTextinputQtdDoubleRaw*100000.0)/100000.0;
+            //mTextinputQtdDouble = Math.floor(mTextinputQtdDoubleRaw*100000.0)/100000.0;
+
+
+
+
+
+linha: 314
+
+                //String stringDoubleLineArray = Double.toString(doubleLineArray);
+
+
+
+
+
+
+
+
+        //        if (mTextinputQtdDouble < 0.001) {
+        //            mTextinputQtdDouble = 0.000;
+        //        } else {
+        //            mTextinputQtdDouble = Math.floor(mTextinputQtdDouble * 1000.0) / 1000.0;
+        //        }
+
+
+
+
+
+
+//Old else do de baixo
+//        else if (mapEANQtdInventario.containsKey(mTextinputEAN)) {
+//            mapEANQtdInventario.replace(mTextinputEAN, (mapEANQtdInventario.get(mTextinputEAN) + mTextinputQtdDouble));
+//            lastQtdMap = (mapEANQtdInventario.get(mTextinputEAN).toString().trim());
+//
+
+
+
+
+MainActivity.java
+
+//O caminho de path é = "/storage/emulated/0"
+        File path = Environment.getExternalStorageDirectory();
+        //public static File path = new File(System.getenv("EXTERNAL_STORAGE"));
+
+        File fullpath = new File(path + "/InventarioPeruzzoAndroid");
+        String fileNameRuptura = "ruptura.txt";
+        File fullPathFileNameRuptura = new File(fullpath, fileNameRuptura);
+
+

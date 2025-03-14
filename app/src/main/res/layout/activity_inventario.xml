@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    tools:context=".Inventario">
+
+    <!-- Loja -->
+    <TextView
+        android:id="@+id/showloja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Loja: 1002"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="16sp" />
+
+    <!-- Campo EAN -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutEAN"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/showloja">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputEAN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Insira o código"
+            android:inputType="number"
+            android:maxLength="15" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Campo Quantidade -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutQtd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutEAN"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputQtd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Insira a quantidade"
+            android:inputType="numberDecimal"
+            android:maxLength="15"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Botão adicionar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/adicionarBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ADICIONAR"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutQtd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/showInventarioProdutos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Produtos: 0"
+        app:layout_constraintTop_toBottomOf="@id/adicionarBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/showInventarioTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total: 0"
+        app:layout_constraintTop_toBottomOf="@id/showInventarioProdutos"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/showEAN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Código: 0"
+        app:layout_constraintTop_toBottomOf="@id/showInventarioTotal"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/showQtd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quantidade: 0"
+        app:layout_constraintTop_toBottomOf="@id/showEAN"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <!-- Botões inferiores -->
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/modificarBtn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="MODIFICAR"
+            android:layout_marginEnd="4dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/voltarBtn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="VOLTAR"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
