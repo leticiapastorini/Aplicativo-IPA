@@ -13,9 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -39,7 +38,7 @@ public class Inventario extends AppCompatActivity {
     Button mAdicionarBtn;
     Button mModificarBtn;
     Button mMostrarColetasBtn;
-    TextView mFinalizarLink; // Alterado de Button para TextView
+    TextView mFinalizarLink;
 
     // Variáveis internas
     String mTextinputEAN;
@@ -47,6 +46,10 @@ public class Inventario extends AppCompatActivity {
     Double mTextinputQtdDouble;
     Double mTextinputQtdDoubleRaw;
     private String lojaLocal;
+
+    // Controle de tempo para evitar bipagens rápidas
+    private long ultimaBipagem = 0;
+    private static final long TEMPO_MINIMO_ENTRE_BIPAGENS = 1500; // 1.5 segundos
 
     // Caminhos dos arquivos
     public static File path = Environment.getExternalStorageDirectory();
@@ -85,8 +88,7 @@ public class Inventario extends AppCompatActivity {
         mAdicionarBtn = findViewById(R.id.adicionarBtn);
         mModificarBtn = findViewById(R.id.modificarBtn);
         mMostrarColetasBtn = findViewById(R.id.mostrarColetasBtn);
-       // No onCreate(), inicialize a variável:
-    mFinalizarLink = findViewById(R.id.finalizarLink);
+        mFinalizarLink = findViewById(R.id.finalizarLink);
 
         // Exibe a loja e contadores
         mValueShowLoja.setText("Loja: " + lojaLocal);
@@ -101,25 +103,55 @@ public class Inventario extends AppCompatActivity {
             }
             return false;
         });
+// Ação para o botão "Diminuir"
+mModificarBtn.setOnClickListener(v -> {
+    String ean = mInputEAN.getText().toString().trim();
+    if (!ean.isEmpty() && mapEANQtdInventario.containsKey(ean)) {
+        if (mapEANQtdInventario.get(ean) > 0) {
+            mapEANQtdInventario.put(ean, mapEANQtdInventario.get(ean) - 1);
+            mValueshowQtd.setText("Quantidade: " + mapEANQtdInventario.get(ean));
+            Toast.makeText(this, "Quantidade reduzida!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "O produto já está com 0!", Toast.LENGTH_SHORT).show();
+        }
+    } else {
+        Toast.makeText(this, "Código inválido ou não bipado!", Toast.LENGTH_SHORT).show();
+    }
 
-        // Botão Adicionar
+    // 🚀 Limpa os campos após diminuir
+    mInputEAN.getText().clear();
+    mInputQtd.getText().clear();
+    mInputEAN.requestFocus();
+});
+
+
+// Ação para o botão "Mostrar Coletas"
+mMostrarColetasBtn.setOnClickListener(v -> mostrarColetas());
+
+        // Botão Adicionar com confirmação
         mAdicionarBtn.setOnClickListener(v -> {
-            inputHandler(mInputEAN.getText().toString().trim(), mInputQtd.getText().toString().trim());
+            mTextinputEAN = mInputEAN.getText().toString().trim();
+            mTextinputQtd = mInputQtd.getText().toString().trim();
+
+            if (mTextinputEAN.isEmpty() || mTextinputQtd.isEmpty()) {
+                Toast.makeText(Inventario.this, "Preencha os campos corretamente!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Exibir alerta antes de adicionar um novo código ao inventário
+            new AlertDialog.Builder(Inventario.this)
+                .setTitle("Confirmação")
+                .setMessage("Deseja realmente adicionar o código " + mTextinputEAN + " com quantidade " + mTextinputQtd + "?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    inputHandler(mTextinputEAN, mTextinputQtd);
+                    saveInventarioToTxtMapInventario();
+                    saveUtilsToTxtMapInventario();
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                .show();
         });
 
-        // Botão Modificar
-        mModificarBtn.setOnClickListener(v -> {
-            mInputEAN.requestFocus();
-            mInputQtd.setText("-");
-            mInputQtd.setSelection(1);
-        });
-
-        // Botão Mostrar Coletas
-        mMostrarColetasBtn.setOnClickListener(v -> {
-            mostrarColetas();
-        });
-
-        // Definir evento de clique no link
+        // Definir evento de clique no link "Finalizar"
         mFinalizarLink.setOnClickListener(v -> {
             saveInventarioToTxtMapInventario();
             saveUtilsToTxtMapInventario();
@@ -127,16 +159,8 @@ public class Inventario extends AppCompatActivity {
             inventarioSeguro.exportarInventarioProtegido(mapEANQtdInventario);
             Toast.makeText(this, "Inventário finalizado e exportado!", Toast.LENGTH_LONG).show();
         });
-        mInputEAN.requestFocus();
-    }
 
-    private void mostrarColetas() {
-        StringBuilder coletaStr = new StringBuilder("Coletas:\n");
-        for (Map.Entry<String, Double> entry : mapEANQtdInventario.entrySet()) {
-            coletaStr.append("EAN: ").append(entry.getKey())
-                    .append(" | Quantidade: ").append(entry.getValue()).append("\n");
-        }
-        Toast.makeText(this, coletaStr.toString(), Toast.LENGTH_LONG).show();
+        mInputEAN.requestFocus();
     }
 
     public static void readerInventarioTxtToMapInventario() {
@@ -144,7 +168,9 @@ public class Inventario extends AppCompatActivity {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] lineArray = line.split(";");
-                mapEANQtdInventario.put(lineArray[1], Double.parseDouble(lineArray[2].replace(",", ".")));
+                if (lineArray.length >= 3) {
+                    mapEANQtdInventario.put(lineArray[1], Double.parseDouble(lineArray[2].replace(",", ".")));
+                }
             }
         } catch (Exception ignored) {}
     }
@@ -178,9 +204,29 @@ public class Inventario extends AppCompatActivity {
             pw.println("Produtos;" + inventarioBipadosProdutos + ";Total;" + inventarioBipadosTotal);
         } catch (IOException ignored) {}
     }
+    // Método para exibir coletas
+    private void mostrarColetas() {
+        StringBuilder coletaStr = new StringBuilder("Coletas:\n");
+        for (Map.Entry<String, Double> entry : mapEANQtdInventario.entrySet()) {
+            coletaStr.append("EAN: ").append(entry.getKey())
+                    .append(" | Quantidade: ").append(entry.getValue()).append("\n");
+        }
+        Toast.makeText(this, coletaStr.toString(), Toast.LENGTH_LONG).show();
+    }
+
+
     private void inputHandler(String ean, String qtd) {
-        if (ean.isEmpty() || qtd.isEmpty()) {
-            Toast.makeText(this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
+        long agora = System.currentTimeMillis();
+    
+        // 🚨 Proteção contra bipagem muito rápida
+        if (agora - ultimaBipagem < TEMPO_MINIMO_ENTRE_BIPAGENS) {
+            Toast.makeText(this, "Bipagem muito rápida! Aguarde um momento.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    
+        // 🚨 Validação de código
+        if (ean.isEmpty() || ean.length() < 8) {
+            Toast.makeText(this, "Código de barras inválido!", Toast.LENGTH_SHORT).show();
             return;
         }
     
@@ -196,6 +242,8 @@ public class Inventario extends AppCompatActivity {
             mValueShowInventarioTotal.setText("Total: " + inventarioBipadosTotal);
             mValueShowEAN.setText("Código: " + ean);
             mValueshowQtd.setText("Quantidade: " + mapEANQtdInventario.get(ean));
+    
+            ultimaBipagem = agora;
     
             mInputEAN.getText().clear();
             mInputQtd.getText().clear();
