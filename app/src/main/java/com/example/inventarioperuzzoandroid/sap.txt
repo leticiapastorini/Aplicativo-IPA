@@ -1,0 +1,120 @@
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+public class SAPInventarioReader {
+
+    private static final String AES_KEY = "0123456789abcdef"; // Deve ser a mesma chave do app Android
+
+    public static void main(String[] args) {
+        try {
+            // Caminho do arquivo (Ajuste conforme necessário)
+            File arquivoSAP = new File("C:/InventarioPeruzzoAndroid/.pasta_protegida/inventario_sap.txt");
+
+            if (!arquivoSAP.exists()) {
+                System.err.println("Arquivo SAP não encontrado!");
+                return;
+            }
+
+            // Lê o conteúdo criptografado do arquivo
+            BufferedReader br = new BufferedReader(new FileReader(arquivoSAP));
+            String linha;
+            System.out.println("📜 Dados Descriptografados:");
+
+            while ((linha = br.readLine()) != null) {
+                // Descriptografar cada linha
+                String linhaDescriptografada = decrypt(linha, AES_KEY);
+                System.out.println(linhaDescriptografada);
+            }
+            br.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String decrypt(String encryptedData, String key) throws Exception {
+        SecretKeySpec aesKey = new SecretKeySpec(key.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, aesKey);
+        byte[] decodedBytes = Base64.getDecoder().decode(encryptedData);
+        return new String(cipher.doFinal(decodedBytes), StandardCharsets.UTF_8);
+    }
+}
+Para que o SAP consiga ler e descriptografar o arquivo inventario_sap.txt, ele precisará seguir um processo de descriptografia AES usando a mesma chave que foi usada na criptografia (AES_KEY = "0123456789abcdef").
+
+🛠 Como o SAP pode descriptografar o arquivo?
+O processo do lado do SAP deve incluir os seguintes passos:
+
+Ler o conteúdo do arquivo inventario_sap.txt.
+Aplicar a descriptografia AES usando a mesma chave fixa.
+Interpretar o conteúdo e processar os dados.
+📝 O que esse código faz?
+✅ Abre o arquivo inventario_sap.txt no SAP.
+✅ Lê cada linha criptografada.
+✅ Aplica a descriptografia AES com a mesma chave do app.
+✅ Imprime os dados legíveis para o SAP processar.
+
+🛠 Adaptações necessárias no SAP
+Se o SAP não suportar Java, então:
+
+Se estiver em Python, pode usar pycryptodome para descriptografar.
+Se for em ABAP, precisará de um módulo para AES.
+Se for em outro sistema, podemos adaptar para a linguagem correta.
+📌 Próximos Passos
+🔹 Valida se o SAP pode rodar esse código Java.
+🔹 Testa um arquivo de exemplo gerado pelo Android.
+🔹 Caso precise de outra linguagem, adaptamos o código! 🚀
+
+
+
+
+
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
+public class LerInventarioSAP {
+
+    private static final String AES_KEY = "0123456789abcdef"; // Mesma chave usada no Android
+
+    public static void main(String[] args) {
+        try {
+            // Caminho do arquivo (ajuste para o diretório correto no SAP)
+            File arquivoSAP = new File("C:/InventarioPeruzzoAndroid/.pasta_protegida/inventario_sap.txt");
+
+            if (!arquivoSAP.exists()) {
+                System.out.println("Arquivo SAP não encontrado.");
+                return;
+            }
+
+            BufferedReader br = new BufferedReader(new FileReader(arquivoSAP));
+            String line;
+
+            System.out.println("Conteúdo do inventário (Descriptografado):");
+            while ((line = br.readLine()) != null) {
+                // Descriptografar cada linha
+                String linhaDescriptografada = decrypt(line, AES_KEY);
+                System.out.println(linhaDescriptografada);
+            }
+            br.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String decrypt(String encryptedData, String key) throws Exception {
+        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, aesKey);
+        byte[] decodedBytes = Base64.getDecoder().decode(encryptedData);
+        return new String(cipher.doFinal(decodedBytes), StandardCharsets.UTF_8);
+    }
+}

@@ -38,6 +38,7 @@ public class Ruptura extends AppCompatActivity {
     TextView mValueShowEAN;
     TextView mValueshowQtd;
     TextView mValueShowSize;
+    TextView mFinalizarRuptura;
 
     // Botões
     Button mAdicionarBtn;
@@ -108,6 +109,19 @@ public class Ruptura extends AppCompatActivity {
         // Ajuste inicial do input
         mInputQtd.setText("1");
         mInputEAN.requestFocus();
+
+        mFinalizarRuptura = findViewById(R.id.finalizarRupturaLink);
+
+        mFinalizarRuptura.setOnClickListener(v -> {
+            saveRupturaToTxtMapRuptura();
+            saveUtilsToTxtMapRuptura();
+
+            // Exportação segura (criptografada para SAP)
+            InventarioSeguro inventarioSeguro = new InventarioSeguro(this);
+            inventarioSeguro.exportarRupturaProtegida(mapEANQtdRuptura);
+
+        Toast.makeText(this, "Ruptura finalizada e exportada com segurança!", Toast.LENGTH_LONG).show();
+        });
 
         // Ao pressionar Enter em mInputEAN
         mInputEAN.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
