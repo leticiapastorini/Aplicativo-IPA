@@ -108,7 +108,9 @@ public class Ruptura extends AppCompatActivity {
 
         // Ajuste inicial do input
         mInputQtd.setText("1");
-        mInputEAN.requestFocus();
+        mInputQtd.setFocusable(false);  // Não permite foco no campo
+        mInputQtd.setEnabled(false);    // Desativa completamente o campo
+
 
         mFinalizarRuptura = findViewById(R.id.finalizarRupturaLink);
 
@@ -129,7 +131,7 @@ public class Ruptura extends AppCompatActivity {
                     (actionId == EditorInfo.IME_ACTION_DONE)) {
 
                 mTextinputEAN = mInputEAN.getText().toString().trim();
-                mTextinputQtd = mInputQtd.getText().toString().trim();
+                mTextinputQtd = "1";  // Sempre fixa a quantidade como 1
 
                 // Validação
                 if (mTextinputEAN.isEmpty() && mTextinputQtd.isEmpty()) {
@@ -185,7 +187,7 @@ public class Ruptura extends AppCompatActivity {
         // Botão Adicionar
         mAdicionarBtn.setOnClickListener(v -> {
             mTextinputEAN = mInputEAN.getText().toString().trim();
-            mTextinputQtd = mInputQtd.getText().toString().trim();
+            mTextinputQtd = "1";  // Mantém a quantidade sempre fixa como 1
 
             if (mTextinputEAN.isEmpty() && mTextinputQtd.isEmpty()) {
                 Toast.makeText(Ruptura.this, "Por favor, preencha os campos.", Toast.LENGTH_SHORT).show();
