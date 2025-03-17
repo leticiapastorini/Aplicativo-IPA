@@ -33,7 +33,29 @@
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="2dp"/> <!-- Pequeno ajuste para cima -->
+        android:layout_marginTop="4dp"/>
+
+    <!-- Última Coleta - Informações -->
+   <TextView
+    android:id="@+id/ultimaColetaEAN"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Última Coleta: Nenhuma"
+    android:textStyle="bold"
+    android:textSize="8sp"
+    app:layout_constraintTop_toBottomOf="@id/showloja"
+    app:layout_constraintStart_toStartOf="parent"/>
+
+<TextView
+    android:id="@+id/ultimaColetaQtd"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Quantidade: 0"
+    android:textStyle="bold"
+    android:textSize="8sp"
+    app:layout_constraintTop_toBottomOf="@id/ultimaColetaEAN"
+    app:layout_constraintStart_toStartOf="parent"/>
+
 
     <!-- Campo Código de Barras -->
     <com.google.android.material.textfield.TextInputLayout
@@ -43,7 +65,7 @@
         android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/showloja">
+        app:layout_constraintTop_toBottomOf="@id/ultimaColetaQtd">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputEAN"
@@ -133,7 +155,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="-5dp"
         app:layout_constraintTop_toBottomOf="@id/showQtd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -142,7 +164,7 @@
             android:id="@+id/modificarBtn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:text="DIMINUIR"
             android:layout_marginEnd="8dp"/>
 
@@ -150,7 +172,7 @@
             android:id="@+id/mostrarColetasBtn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:text="MOSTRAR COLETAS"/>
     </LinearLayout>
 

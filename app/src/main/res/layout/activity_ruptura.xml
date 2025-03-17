@@ -63,13 +63,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutEAN">
 
-        <com.google.android.material.textfield.TextInputEditText
+       <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputQtd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Insira a quantidade"
-            android:inputType="numberDecimal"
-            android:maxLength="2" />
+            android:hint="Quantidade"
+            android:text="1"
+            android:inputType="none"
+            android:enabled="false"
+            android:focusable="false" />
+
 
     </com.google.android.material.textfield.TextInputLayout>
 
