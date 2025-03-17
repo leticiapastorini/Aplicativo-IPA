@@ -142,6 +142,8 @@ public class Inventario extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, "Produto não encontrado no inventário!", Toast.LENGTH_SHORT).show();
                 }
+                // 📝 **Salvar log da modificação no Inventário**
+            LogBipagens.salvarLogBipagem(ean, -qtdReduzir, true);
 
                 // Atualiza a exibição da quantidade na tela
                 mValueshowQtd.setText("Quantidade: " + mapEANQtdInventario.getOrDefault(ean, 0.0));
@@ -270,7 +272,10 @@ mMostrarColetasBtn.setOnClickListener(v -> mostrarColetas());
             mapEANQtdInventario.put(ean, mapEANQtdInventario.getOrDefault(ean, 0.0) + mTextinputQtdDouble);
             inventarioBipadosTotal++;
             inventarioBipadosProdutos = mapEANQtdInventario.size();
-    
+
+      // 📝 **Salvar log da bipagem no Inventário**
+      LogBipagens.salvarLogBipagem(ean, mTextinputQtdDouble, true);
+
             mValueShowInventarioProdutos.setText("Produtos: " + inventarioBipadosProdutos);
             mValueShowInventarioTotal.setText("Total: " + inventarioBipadosTotal);
             mValueShowEAN.setText("Código: " + ean);

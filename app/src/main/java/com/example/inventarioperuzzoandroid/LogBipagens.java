@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
+import java.util.Calendar;
+import java.util.TimeZone;
 public class LogBipagens {
 
     private static final int MAX_ENTRADAS = 100; // Define o limite de registros no log
@@ -85,12 +86,17 @@ public class LogBipagens {
         return registros;
     }
 
-    /**
-     * Obtém a data e hora atual formatada.
-     * @return String da data e hora atual no formato dd/MM/yyyy HH:mm:ss.
-     */
-    private static String obterDataHoraAtual() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
-        return sdf.format(new Date());
-    }
+                /**
+         * Obtém a data e hora atual formatada corretamente com fuso horário.
+         * @return String da data e hora atual no formato dd/MM/yyyy HH:mm:ss.
+         */
+        private static String obterDataHoraAtual() {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+
+            // 🔹 Defina manualmente o fuso horário (por exemplo, para o Brasil) se necessário
+            TimeZone timeZone = TimeZone.getTimeZone("America/Sao_Paulo"); 
+            sdf.setTimeZone(timeZone);
+
+            return sdf.format(Calendar.getInstance().getTime());
+        }
 }

@@ -115,26 +115,41 @@ public class Ruptura extends AppCompatActivity {
     private void processarEntrada() {
         String ean = mInputEAN.getText().toString().trim();
         String qtd = "1"; // Quantidade sempre fixa como 1
-
+    
         if (ean.isEmpty()) {
             Toast.makeText(this, "Por favor, insira um código de barras!", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        inputHandler(ean, qtd);
-        saveRupturaToTxtMapRuptura();
-        saveUtilsToTxtMapRuptura();
-
-        mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos);
-        mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal);
-        mValueShowEAN.setText("Código: " + ean);
-        mValueshowQtd.setText("Quantidade: " + mapEANQtdRuptura.getOrDefault(ean, 0.0));
-
-        mInputEAN.getText().clear();
-        mInputQtd.setText("1");
-        mInputEAN.requestFocus();
+    
+        try {
+            double qtdDouble = Double.parseDouble(qtd.replace(",", "."));
+    
+            // Salva a quantidade corretamente no mapa
+            inputHandler(ean, qtd);
+    
+            // Salva os dados no arquivo
+            saveRupturaToTxtMapRuptura();
+            saveUtilsToTxtMapRuptura();
+    
+            // Atualiza a UI
+            mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos);
+            mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal);
+            mValueShowEAN.setText("Código: " + ean);
+            mValueshowQtd.setText("Quantidade: " + mapEANQtdRuptura.getOrDefault(ean, 0.0));
+    
+            // 📝 **Salvar log da bipagem na Ruptura**
+            LogBipagens.salvarLogBipagem(ean, qtdDouble, false);
+    
+            // Limpa os campos
+            mInputEAN.getText().clear();
+            mInputQtd.setText("1");
+            mInputEAN.requestFocus();
+    
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Erro ao processar a quantidade!", Toast.LENGTH_SHORT).show();
+        }
     }
-
+    
     private void mostrarColetas() {
         if (mapEANQtdRuptura.isEmpty()) {
             Toast.makeText(this, "Nenhum produto em ruptura encontrado.", Toast.LENGTH_SHORT).show();
