@@ -103,26 +103,59 @@ public class Inventario extends AppCompatActivity {
             }
             return false;
         });
-// Ação para o botão "Diminuir"
-mModificarBtn.setOnClickListener(v -> {
-    String ean = mInputEAN.getText().toString().trim();
-    if (!ean.isEmpty() && mapEANQtdInventario.containsKey(ean)) {
-        if (mapEANQtdInventario.get(ean) > 0) {
-            mapEANQtdInventario.put(ean, mapEANQtdInventario.get(ean) - 1);
-            mValueshowQtd.setText("Quantidade: " + mapEANQtdInventario.get(ean));
-            Toast.makeText(this, "Quantidade reduzida!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "O produto já está com 0!", Toast.LENGTH_SHORT).show();
-        }
-    } else {
-        Toast.makeText(this, "Código inválido ou não bipado!", Toast.LENGTH_SHORT).show();
-    }
+        // Ação para o botão "Diminuir"
+        mModificarBtn.setOnClickListener(v -> {
+            String ean = mInputEAN.getText().toString().trim();
+            String qtdStr = mInputQtd.getText().toString().trim();
 
-    // 🚀 Limpa os campos após diminuir
-    mInputEAN.getText().clear();
-    mInputQtd.getText().clear();
-    mInputEAN.requestFocus();
-});
+            // Verifica se o EAN foi inserido
+            if (ean.isEmpty()) {
+                Toast.makeText(this, "Por favor, insira um código de barras!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Verifica se a quantidade foi inserida
+            if (qtdStr.isEmpty()) {
+                Toast.makeText(this, "Por favor, insira a quantidade a ser reduzida!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                double qtdReduzir = Double.parseDouble(qtdStr.replace(",", "."));
+                if (qtdReduzir <= 0) {
+                    Toast.makeText(this, "A quantidade deve ser maior que zero!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Verifica se o produto existe no inventário
+                if (mapEANQtdInventario.containsKey(ean)) {
+                    double qtdAtual = mapEANQtdInventario.get(ean);
+
+                    // Só reduz se houver quantidade suficiente
+                    if (qtdAtual >= qtdReduzir) {
+                        mapEANQtdInventario.put(ean, qtdAtual - qtdReduzir);
+                        Toast.makeText(this, "Quantidade reduzida com sucesso!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Quantidade insuficiente para reduzir!", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(this, "Produto não encontrado no inventário!", Toast.LENGTH_SHORT).show();
+                }
+
+                // Atualiza a exibição da quantidade na tela
+                mValueshowQtd.setText("Quantidade: " + mapEANQtdInventario.getOrDefault(ean, 0.0));
+
+                // Limpa os campos
+                mInputEAN.getText().clear();
+                mInputQtd.getText().clear();
+                mInputEAN.requestFocus();
+
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Quantidade inválida!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
 // Ação para o botão "Mostrar Coletas"
