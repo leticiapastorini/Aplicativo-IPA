@@ -236,9 +236,18 @@ mMostrarColetasBtn.setOnClickListener(v -> mostrarColetas());
     private void saveUtilsToTxtMapInventario() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fullPathFileNameUtilsInventario, false))) {
             inventarioBipadosProdutos = mapEANQtdInventario.size();
+    
+            // Atualiza o total de produtos somando todas as quantidades
+            inventarioBipadosTotal = (int) Math.round(0);
+            for (double quantidade : mapEANQtdInventario.values()) {
+                inventarioBipadosTotal += (int) Math.round(quantidade);
+            }
+
+    
             pw.println("Produtos;" + inventarioBipadosProdutos + ";Total;" + inventarioBipadosTotal);
         } catch (IOException ignored) {}
     }
+    
     // Método para exibir coletas
     private void mostrarColetas() {
         StringBuilder coletaStr = new StringBuilder("Coletas:\n");
@@ -270,7 +279,13 @@ mMostrarColetasBtn.setOnClickListener(v -> mostrarColetas());
             mTextinputQtdDouble = Math.round(mTextinputQtdDoubleRaw * 1000.0) / 1000.0;
     
             mapEANQtdInventario.put(ean, mapEANQtdInventario.getOrDefault(ean, 0.0) + mTextinputQtdDouble);
-            inventarioBipadosTotal++;
+            // Atualiza o total corretamente somando todas as quantidades
+            inventarioBipadosTotal = (int) Math.round(0);
+            for (double quantidade : mapEANQtdInventario.values()) {
+                inventarioBipadosTotal += (int) Math.round(quantidade);
+            }
+
+
             inventarioBipadosProdutos = mapEANQtdInventario.size();
 
       // 📝 **Salvar log da bipagem no Inventário**
