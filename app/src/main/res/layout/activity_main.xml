@@ -67,7 +67,22 @@
         android:layout_marginBottom="8dp"/>
 
  
-    
+    <!-- Botão "Sair" acima do botão "Sobre" -->
+    <Button
+        android:id="@+id/btnSair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sair"
+        android:textAllCaps="false"
+        android:textColor="#616161"
+        android:textSize="13sp"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="40dp"/>
+
+
     <!-- Botão "Sobre" minimalista, singelo, no rodapé -->
     <Button
         android:id="@+id/goToSobreBtn"

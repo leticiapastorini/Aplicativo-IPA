@@ -1,14 +1,16 @@
 package com.example.inventarioperuzzoandroid;
 
+import android.util.Log;
+
+import static com.example.inventarioperuzzoandroid.MainActivity.loja;
 import static com.example.inventarioperuzzoandroid.MainActivity.rupturaBipadosProdutos;
 import static com.example.inventarioperuzzoandroid.MainActivity.rupturaBipadosTotal;
-import static com.example.inventarioperuzzoandroid.Ruptura.mapEANQtdRupturaVirgula;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,34 +19,59 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Ruptura extends AppCompatActivity {
 
-    // Views
-    TextView mValueShowLoja, mValueShowRupturaProdutos, mValueShowRupturaTotal, mValueShowEAN, mValueshowQtd, mFinalizarRuptura;
-    EditText mInputEAN, mInputQtd;
-    Button mAdicionarBtn, mModificarBtn, mMostrarColetasBtn;
+    //Informações que interagem com o usuário
+    TextView mValueShowLoja;
+    EditText mInputEAN;
+    EditText mInputQtd;
+    TextView mValueShowRupturaProdutos;
+    TextView mValueShowRupturaTotal;
+    TextView mValueShowEAN;
+    TextView mValueshowQtd;
+    TextView mValueShowSize;
 
-    // Variáveis
-    private String lojaLocal;
-    private String lastQtdMap;
-    private Double lastQtdMapDouble;
-    private Double mTextinputQtdDouble;
 
-    // Caminho dos arquivos
+    //Informações de manuseio interno
+    String mTextinputEAN;
+    String mTextinputQtd;
+    Double mTextinputQtdDouble;
+    Button mAdicionarBtn;
+    Button mModificarBtn;
+    Button mVoltarBtn;
+
+
+    //Informações de path's em geral
     public static File path = Environment.getExternalStorageDirectory();
     public static File fullpath = new File(path + "/InventarioPeruzzoAndroid");
-    private static final String fileNameRuptura = "ruptura.txt";
-    private static final File fullPathFileNameRuptura = new File(fullpath, fileNameRuptura);
-    private static final String fileNameUtilsRuptura = "utilsRuptura.txt";
-    private static final File fullPathFileNameUtilsRuptura = new File(fullpath, fileNameUtilsRuptura);
-    public static Map<String, Double> mapEANQtdRupturaVirgula = new HashMap<>();
+    private static String fileNameRuptura = "ruptura.txt";
+    private static File fullPathFileNameRuptura = new File(fullpath, fileNameRuptura);
+    private static String fileNameUtilsRuptura = "utilsRuptura.txt";
+    private static File fullPathFileNameUtilsRuptura = new File(fullpath, fileNameUtilsRuptura);
+    private static String lastQtdMap;
+    private static Double lastQtdMapDouble;
 
-    // Mapas para armazenar os produtos em ruptura
-    public static Map<String, Double> mapEANQtdRuptura = new HashMap<>();
+
+    //Map's da Ruptura
+    public static Map<String, Double> mapEANQtdRuptura;
+    static {
+        mapEANQtdRuptura = new HashMap<>();
+    }
+
+    public static Map<String, Double> mapEANQtdRupturaVirgula;
+    static {
+        mapEANQtdRupturaVirgula = new HashMap<>();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,161 +79,372 @@ public class Ruptura extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ruptura);
 
-        // Ler loja salva no SharedPreferences
-        SharedPreferences prefs = getSharedPreferences("InventarioPrefs", MODE_PRIVATE);
-        lojaLocal = prefs.getString("loja", "");
-
-        // Ler dados dos arquivos
         readerRupturaTxtToMapRuptura();
         readerUtilsTxtToMapRuptura();
 
-        // Inicialização das Views
+
+        //Inicializa as views
         mValueShowLoja = findViewById(R.id.showloja);
         mValueShowRupturaProdutos = findViewById(R.id.showRupturaProdutos);
         mValueShowRupturaTotal = findViewById(R.id.showRupturaTotal);
+        
         mValueShowEAN = findViewById(R.id.showEAN);
         mValueshowQtd = findViewById(R.id.showQtd);
         mInputEAN = findViewById(R.id.inputEAN);
         mInputQtd = findViewById(R.id.inputQtd);
         mAdicionarBtn = findViewById(R.id.adicionarBtn);
         mModificarBtn = findViewById(R.id.modificarBtn);
-        mMostrarColetasBtn = findViewById(R.id.mostrarColetasBtn);
-        mFinalizarRuptura = findViewById(R.id.finalizarRupturaLink);
+        mVoltarBtn = findViewById(R.id.voltarBtn);
 
-        // Exibir loja e contadores na tela
-        mValueShowLoja.setText("Loja: " + lojaLocal);
-        mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos);
-        mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal);
 
-        // Ajustar campo de quantidade
+        mValueShowLoja.setText("Loja: " + loja);
+        mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos.toString());
+        mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal.toString());
+        //mValueShowSize.setText("Size: " + mapEANQtdRuptura.size());
+
         mInputQtd.setText("1");
-        mInputQtd.setFocusable(false);
-        mInputQtd.setEnabled(false);
+        mInputEAN.requestFocus();
 
-        // Configuração de botões
-        mMostrarColetasBtn.setOnClickListener(v -> mostrarColetas());
 
-        mFinalizarRuptura.setOnClickListener(v -> {
-            saveRupturaToTxtMapRuptura();
-            saveUtilsToTxtMapRuptura();
-            InventarioSeguro inventarioSeguro = new InventarioSeguro(this);
-            inventarioSeguro.exportarRupturaProtegida(mapEANQtdRuptura);
-            Toast.makeText(this, "Ruptura finalizada e exportada!", Toast.LENGTH_LONG).show();
-        });
+        //Adição através da tecla enter
+        mInputEAN.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    //code here
+                    //Toast.makeText(Ruptura.this, "Teste com sucesso.", Toast.LENGTH_SHORT).show();
 
-        mInputEAN.setOnEditorActionListener((v, actionId, event) -> {
-            if ((event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                processarEntrada();
+                    mTextinputEAN = mInputEAN.getText().toString().trim();
+                    mTextinputQtd = mInputQtd.getText().toString().trim();
+
+
+                    //Validação
+                    if (mTextinputEAN.isEmpty() && mTextinputQtd.isEmpty()) {
+                        Toast.makeText(Ruptura.this, "Por favor, preencha os campos.", Toast.LENGTH_SHORT).show();
+                    } else if (mTextinputEAN.isEmpty()) {
+                        Toast.makeText(Ruptura.this, "Por favor, preencha o código corretamente.", Toast.LENGTH_SHORT).show();
+                    } else if (mTextinputQtd.isEmpty()) {
+                        Toast.makeText(Ruptura.this, "Por favor, preencha a quantidade corretamente.", Toast.LENGTH_SHORT).show();
+                        if (rupturaBipadosTotal >= 1) {
+                            mValueshowQtd.setText("Quantidade: " + lastQtdMap);
+                        } else {
+                            mValueshowQtd.setText("Quantidade: " + mInputQtd.getText().toString().trim());
+                        }
+
+                    } else {
+                        inputHandler(mTextinputEAN, mTextinputQtd);
+                    }
+
+
+                    // Salvamento dos arquivos no txt
+                    
+    saveRupturaToTxtMapRuptura();
+    Log.d("RUPTURA_SAVE", "Ruptura salva corretamente no TXT.");
+    
+                    saveUtilsToTxtMapRuptura();
+
+
+                    // Atualizar as informações na view do usuário
+                    mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos.toString());
+                    mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal.toString());
+                    //mValueShowSize.setText("Size: " + mapEANQtdRuptura.size());
+
+                    if (mapEANQtdRuptura.get(mTextinputEAN) != null) {
+                        lastQtdMap = (mapEANQtdRuptura.get(mTextinputEAN).toString().trim());
+                    } else {
+                        lastQtdMap = " ";
+                    }
+
+                    mValueShowEAN.setText("Código: " + mInputEAN.getText().toString().trim());
+                    mValueshowQtd.setText("Quantidade: " + lastQtdMap);
+
+
+                    mInputEAN.getText().clear();
+                    mInputQtd.getText().clear();
+                    mInputQtd.setText("1");
+
+                    mInputEAN.requestFocus();
+
+
+                }
+
+                mInputEAN.requestFocus();
+                return false;
             }
-            return false;
         });
 
-        mAdicionarBtn.setOnClickListener(v -> processarEntrada());
 
-        mModificarBtn.setOnClickListener(v -> {
-            mInputQtd.setText("-1");
-            mInputQtd.setSelection(2);
+        //Funções internas dos botões
+        mModificarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mInputEAN.requestFocus();
+                mInputEAN.setPrivateImeOptions("next");
+                mInputQtd.setText("-1");
+                mInputQtd.setSelection(2);
+            }
         });
 
+        mVoltarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMainActivity();
+            }
+        });
+
+        mAdicionarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                mTextinputEAN = mInputEAN.getText().toString().trim();
+                mTextinputQtd = mInputQtd.getText().toString().trim();
+
+
+                //Validação
+                if (mTextinputEAN.isEmpty() && mTextinputQtd.isEmpty()) {
+                    Toast.makeText(Ruptura.this, "Por favor, preencha os campos.", Toast.LENGTH_SHORT).show();
+                } else if (mTextinputEAN.isEmpty()) {
+                    Toast.makeText(Ruptura.this, "Por favor, preencha o código corretamente.", Toast.LENGTH_SHORT).show();
+                } else if (mTextinputQtd.isEmpty()) {
+                    Toast.makeText(Ruptura.this, "Por favor, preencha a quantidade corretamente.", Toast.LENGTH_SHORT).show();
+                    if (rupturaBipadosTotal >= 1) {
+                        mValueshowQtd.setText("Quantidade: " + lastQtdMap);
+                    } else {
+                        mValueshowQtd.setText("Quantidade: " + mInputQtd.getText().toString().trim());
+                    }
+
+                } else {
+                    inputHandler(mTextinputEAN, mTextinputQtd);
+                }
+
+
+                
+    saveRupturaToTxtMapRuptura();
+    Log.d("RUPTURA_SAVE", "Ruptura salva corretamente no TXT.");
+    
+                saveUtilsToTxtMapRuptura();
+
+
+                mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos.toString());
+                mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal.toString());
+                //mValueShowSize.setText("Size: " + mapEANQtdRuptura.size());
+
+
+                if (mapEANQtdRuptura.get(mTextinputEAN) != null) {
+                    lastQtdMap = (mapEANQtdRuptura.get(mTextinputEAN).toString().trim());
+                } else {
+                    lastQtdMap = " ";
+                }
+
+                mValueShowEAN.setText("Código: " + mInputEAN.getText().toString().trim());
+                mValueshowQtd.setText("Quantidade: " + lastQtdMap);
+
+
+                mInputEAN.getText().clear();
+                mInputQtd.getText().clear();
+                mInputQtd.setText("1");
+
+                mInputEAN.requestFocus();
+
+            }
+        });
 
         mInputEAN.requestFocus();
+
     }
 
-    private void processarEntrada() {
-        String ean = mInputEAN.getText().toString().trim();
-        String qtd = "1"; // Quantidade sempre fixa como 1
-    
-        if (ean.isEmpty()) {
-            Toast.makeText(this, "Por favor, insira um código de barras!", Toast.LENGTH_SHORT).show();
-            return;
+    private void openMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+
+
+    private void inputHandler(String mTextinputEAN, String mTextinputQtd) {
+
+        mTextinputQtdDouble = Double.parseDouble(mTextinputQtd);
+        rupturaBipadosTotal += 1;
+        lastQtdMapDouble = mapEANQtdRuptura.get(mTextinputEAN);
+
+
+        if (mapEANQtdRuptura.containsKey(mTextinputEAN) == false && mTextinputEAN.isEmpty() && mTextinputQtdDouble == -1.0) {
+            Toast.makeText(Ruptura.this, "Por favor, preencha o código corretamente.", Toast.LENGTH_SHORT).show();
+
+            lastQtdMap = " ";
+
+        } else if (mapEANQtdRuptura.containsKey(mTextinputEAN) == false && mTextinputEAN.isEmpty() && mTextinputQtdDouble == 1.0) {
+            Toast.makeText(Ruptura.this, "Por favor, preencha o código corretamente.", Toast.LENGTH_SHORT).show();
+
+            lastQtdMap = " ";
+
+        } else if (mapEANQtdRuptura.containsKey(mTextinputEAN) && mTextinputQtdDouble != 1.0 && mapEANQtdRuptura.get(mTextinputEAN) == 0.0) {
+            Toast.makeText(Ruptura.this, "O produto já está zerado. Por favor, preencha corretamente.", Toast.LENGTH_SHORT).show();
+
+            lastQtdMap = " ";
+            rupturaBipadosTotal -= 1;
+
+
+        } else if (mapEANQtdRuptura.containsKey(mTextinputEAN) && mTextinputQtdDouble == 1.0 && mapEANQtdRuptura.get(mTextinputEAN) >= 1.0) {
+//            Toast.makeText(Ruptura.this, "O produto já foi adicionado. Por favor, preencha corretamente.", Toast.LENGTH_SHORT).show();
+
+            mapEANQtdRuptura.put(mTextinputEAN, (mapEANQtdRuptura.get(mTextinputEAN) + mTextinputQtdDouble));
+            lastQtdMap = (mapEANQtdRuptura.get(mTextinputEAN).toString().trim());
+
+//            lastQtdMap = " ";
+//            rupturaBipadosTotal -= 1;
+
+
+            //Reinserção de valores zerados manualmente
+        } else if (mapEANQtdRuptura.containsKey(mTextinputEAN)) {
+
+            if (lastQtdMapDouble == null) {
+                mapEANQtdRuptura.put(mTextinputEAN, mTextinputQtdDouble);
+
+            } else if (mTextinputQtdDouble == 1.0) {
+                mapEANQtdRuptura.put(mTextinputEAN, 1.0);
+
+            }
+            //else if (mTextinputQtdDouble != 1.0) {
+            //mapEANQtdRuptura.put(mTextinputEAN, 0.0);
+            //}
+
+            else if (mTextinputQtdDouble != 1.0) {
+                mapEANQtdRuptura.put(mTextinputEAN, (mapEANQtdRuptura.get(mTextinputEAN) + mTextinputQtdDouble));
+            }
+
+            lastQtdMap = (mapEANQtdRuptura.get(mTextinputEAN).toString().trim());
+
+
+        } else {
+
+            if (mTextinputQtdDouble == -1.0) {
+                Toast.makeText(Ruptura.this, "O produto não foi bipado. Por favor, preencha corretamente.", Toast.LENGTH_SHORT).show();
+
+                lastQtdMap = " ";
+                rupturaBipadosTotal -= 1;
+
+
+            } else {
+                mapEANQtdRuptura.put(mTextinputEAN, mTextinputQtdDouble);
+                lastQtdMap = (mapEANQtdRuptura.get(mTextinputEAN).toString().trim());
+
+            }
         }
-    
+
+
+    }
+
+
+    public static void readerRupturaTxtToMapRuptura() {
         try {
-            double qtdDouble = Double.parseDouble(qtd.replace(",", "."));
-    
-            // Salva a quantidade corretamente no mapa
-            inputHandler(ean, qtd);
-    
-            // Salva os dados no arquivo
-            saveRupturaToTxtMapRuptura();
-            saveUtilsToTxtMapRuptura();
-    
-            // Atualiza a UI
-            mValueShowRupturaProdutos.setText("Produtos: " + rupturaBipadosProdutos);
-            mValueShowRupturaTotal.setText("Total: " + rupturaBipadosTotal);
-            mValueShowEAN.setText("Código: " + ean);
-            mValueshowQtd.setText("Quantidade: " + mapEANQtdRuptura.getOrDefault(ean, 0.0));
-    
-            // 📝 **Salvar log da bipagem na Ruptura**
-            LogBipagens.salvarLogBipagem(ean, qtdDouble, false);
-    
-            // Limpa os campos
-            mInputEAN.getText().clear();
-            mInputQtd.setText("1");
-            mInputEAN.requestFocus();
-    
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Erro ao processar a quantidade!", Toast.LENGTH_SHORT).show();
-        }
-    }
-    
-    private void mostrarColetas() {
-        if (mapEANQtdRuptura.isEmpty()) {
-            Toast.makeText(this, "Nenhum produto em ruptura encontrado.", Toast.LENGTH_SHORT).show();
+            BufferedReader br = new BufferedReader(new FileReader(fullPathFileNameRuptura));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String lineTemp = line;
+                String[] lineArray = lineTemp.split("\\x3B");
+
+                String eanLine = lineArray[1];
+                String qtdLine = lineArray[2];
+
+                if (qtdLine.contains(",")) {
+                    qtdLine = qtdLine.replace(",", ".");
+                }
+
+                double qtdLineDouble = Double.parseDouble(qtdLine);
+
+
+                mapEANQtdRuptura.put(eanLine, qtdLineDouble);
+            }
+            br.close();
+            return;
+
+        } catch (Exception e) {
             return;
         }
+    }
 
-        StringBuilder coletaStr = new StringBuilder("Produtos em Ruptura:\n");
-        for (Map.Entry<String, Double> entry : mapEANQtdRuptura.entrySet()) {
-            coletaStr.append("EAN: ").append(entry.getKey())
-                     .append(" | Quantidade: ").append(entry.getValue()).append("\n");
+    public static void readerUtilsTxtToMapRuptura() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fullPathFileNameUtilsRuptura));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String lineTemp = line;
+                String[] lineArray = lineTemp.split("\\x3B");
+
+
+                int RupturaBipadosProdutostxt = Integer.parseInt(lineArray[1]);
+                int RupturaBipadosTotaltxt = Integer.parseInt(lineArray[3]);
+
+                rupturaBipadosProdutos = RupturaBipadosProdutostxt;
+                rupturaBipadosTotal = RupturaBipadosTotaltxt;
+
+            }
+            br.close();
+
+        } catch (Exception e) {
+            return;
         }
-
-        Toast.makeText(this, coletaStr.toString(), Toast.LENGTH_LONG).show();
     }
 
-    private void inputHandler(String ean, String qtd) {
-        mTextinputQtdDouble = Double.parseDouble(qtd);
-        mapEANQtdRuptura.put(ean, mapEANQtdRuptura.getOrDefault(ean, 0.0) + mTextinputQtdDouble);
-        rupturaBipadosTotal++;
+
+    private void saveRupturaToTxtMapRuptura() {
+        try {
+
+            mapEANQtdRupturaVirgula.putAll(mapEANQtdRuptura);
+
+
+            try {
+                fullpath.mkdirs();
+
+                try {
+                    FileWriter fw = new FileWriter(fullPathFileNameRuptura, false);
+                    PrintWriter pw = new PrintWriter(fw);
+
+
+                    mapEANQtdRupturaVirgula.entrySet().forEach(entry -> {
+                        pw.println(loja + ";" + (entry.getKey()) + ";" + entry.getValue().toString().replace(".", ","));
+                    });
+
+                    pw.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            } catch (Exception e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        } catch (Exception e) {
+            return;
+        }
     }
+
     private void saveUtilsToTxtMapRuptura() {
         try {
             fullpath.mkdirs();
-            FileWriter fw = new FileWriter(fullPathFileNameUtilsRuptura, false);
-            PrintWriter pw = new PrintWriter(fw);
-    
-            rupturaBipadosProdutos = mapEANQtdRuptura.size();
-            pw.println("Produtos;" + rupturaBipadosProdutos + ";Total;" + rupturaBipadosTotal);
-            pw.close();
-        } catch (IOException e) {
+            try {
+                FileWriter fw = new FileWriter(fullPathFileNameUtilsRuptura, false);
+                PrintWriter pw = new PrintWriter(fw);
+
+                rupturaBipadosProdutos = mapEANQtdRupturaVirgula.size();
+                pw.println("Produtos;" + rupturaBipadosProdutos + ";Total;" + rupturaBipadosTotal);
+
+                pw.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    private void readerRupturaTxtToMapRuptura() {
-        try (BufferedReader br = new BufferedReader(new FileReader(fullPathFileNameRuptura))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] lineArray = line.split(";");
-                mapEANQtdRuptura.put(lineArray[1], Double.parseDouble(lineArray[2].replace(",", ".")));
-            }
-        } catch (Exception ignored) {}
-    }
 
-    private void readerUtilsTxtToMapRuptura() {
-        try (BufferedReader br = new BufferedReader(new FileReader(fullPathFileNameUtilsRuptura))) {
-            String[] lineArray = br.readLine().split(";");
-            rupturaBipadosProdutos = Integer.parseInt(lineArray[1]);
-            rupturaBipadosTotal = Integer.parseInt(lineArray[3]);
-        } catch (Exception ignored) {}
-    }
 
-    private void saveRupturaToTxtMapRuptura() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(fullPathFileNameRuptura, false))) {
-            for (Map.Entry<String, Double> entry : mapEANQtdRuptura.entrySet()) {
-                pw.println(lojaLocal + ";" + entry.getKey() + ";" + entry.getValue().toString().replace(".", ","));
-            }
-        } catch (IOException ignored) {}
-    }
 }
